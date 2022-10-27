@@ -87,7 +87,7 @@ const data = [
         <th class="delete">Удалить</th>
         <th>Имя</th>
         <th>Фамилия</th>
-        <th>Телефон</th>
+        <th>Телефон</th>        
       </tr>
     `);
 
@@ -99,6 +99,8 @@ const data = [
     return table;
   };
 
+
+
   const createForm = () => {
     const overlay = document.createElement('div');
     overlay.classList.add('form-overlay');
@@ -106,11 +108,11 @@ const data = [
     form.classList.add('form');
     form.insertAdjacentHTML('beforeend', `
       <button class="close" type="button"></button>
-      <h2 class="form-title>Добавить контакт</h2>
+      <h2 class="form-title">Добавить контакт</h2>
       <div class="form-group">
         <label class="form-label" for="name">Имя:</label>
         <input class="form-input" name="name" id="name" type="text" required>
-      </div>
+      </div>       
       <div class="form-group">
         <label class="form-label" for="surname">Фамилия:</label>
         <input class="form-input" name="surname"
@@ -216,7 +218,12 @@ const data = [
 
     tdPhone.append(phoneLink);
 
-    tr.append(tdDel, tdName, tdSurname, tdPhone);
+    const editButton = document.createElement('button');
+    const btnImg = document.createElement('img');
+    btnImg.src = "../img/icons_edit.svg";
+    editButton.append(btnImg);        
+
+    tr.append(tdDel, tdName, tdSurname, tdPhone, editButton);
     return tr;
   };
 
