@@ -85,8 +85,8 @@ const data = [
     thead.insertAdjacentHTML('beforeend', `
       <tr>
         <th class="delete">Удалить</th>
-        <th>Имя</th>
-        <th>Фамилия</th>
+        <th class="name">Имя</th>
+        <th class="surname">Фамилия</th>
         <th>Телефон</th>        
       </tr>
     `);
@@ -95,10 +95,10 @@ const data = [
 
     table.append(thead, tbody);
     table.tbody = tbody;
+    table.thead = thead;
 
     return table;
   };
-
 
 
   const createForm = () => {
@@ -176,6 +176,7 @@ const data = [
       },
     ]);
     const table = createTable();
+
     const form = createForm();
     const footer = createFooter(title);
 
@@ -186,8 +187,10 @@ const data = [
 
     return {
       list: table.tbody,
+      thead: table.thead,
       logo,
       btnAdd: buttonGroup.btns[0],
+      btnDel: buttonGroup.btns[1],
       formOverlay: form.overlay,
       form: form.form,
     };
@@ -196,6 +199,7 @@ const data = [
 
   const createRow = ({name: firstName, surname, phone}) => {
     const tr = document.createElement('tr');
+    tr.classList.add('contact');
 
     const tdDel = document.createElement('td');
     tdDel.classList.add('delete');
@@ -205,6 +209,7 @@ const data = [
     tdDel.append(buttonDel);
 
     const tdName = document.createElement('td');
+
     tdName.textContent = firstName;
 
     const tdSurname = document.createElement('td');
@@ -219,9 +224,11 @@ const data = [
     tdPhone.append(phoneLink);
 
     const editButton = document.createElement('button');
+    editButton.classList.add('edit__btn');
     const btnImg = document.createElement('img');
-    btnImg.src = "../img/icons_edit.svg";
-    editButton.append(btnImg);        
+
+    btnImg.src = './phonebook/img/icons_edit.svg';
+    editButton.append(btnImg);
 
     tr.append(tdDel, tdName, tdSurname, tdPhone, editButton);
     return tr;
@@ -234,23 +241,30 @@ const data = [
     return allRow;
   };
 
-const hoverRow = (allRow, logo) => {
-  const text = logo.textContent;
-  allRow.forEach(contact => {
-    contact.addEventListener('mouseenter', () => {
-      logo.textContent = contact.phoneLink.textContent
+  const hoverRow = (allRow, logo) => {
+    const text = logo.textContent;
+    allRow.forEach(contact => {
+      contact.addEventListener('mouseenter', () => {
+        logo.textContent = contact.phoneLink.textContent;
+      });
+      contact.addEventListener('mouseleave', () => {
+        logo.textContent = text;
+      });
     });
-    contact.addEventListener('mouseleave', () => {
-      logo.textContent = text;
-    })
-  })
-}
+  };
 
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
     const phoneBook = renderPhoneBook(app, title);
 
-    const {list, logo, btnAdd, formOverlay, form} = phoneBook;
+    const {
+      list,
+      thead,
+      logo,
+      btnAdd,
+      formOverlay,
+      // form,
+      btnDel} = phoneBook;
 
     // Функционал
 
@@ -259,7 +273,7 @@ const hoverRow = (allRow, logo) => {
     hoverRow(allRow, logo);
 
     // Объект-обработчик. Может пригодиться, если хранить данные
-    // в отдельных свойствах или обращаться к ним через this: 
+    // в отдельных свойствах или обращаться к ним через this:
     // btnAdd.addEventListener('click', {
     //   handleEvent() {
     //   formOverlay.classList.add('is-visible');
@@ -267,18 +281,65 @@ const hoverRow = (allRow, logo) => {
     // });
 
     // Другой вариант:
-    btnAdd.addEventListener('click', () => {      
+    btnAdd.addEventListener('click', () => {
       formOverlay.classList.add('is-visible');
     });
 
-    formOverlay.addEventListener('click', () => {
-      formOverlay.classList.remove('is-visible');
+    formOverlay.addEventListener('click', e => {
+      const target = e.target;
+      if (target === formOverlay ||
+      // target.closest('close'))
+          target.classList.contains('close')) {
+      // {
+        formOverlay.classList.remove('is-visible');
+      }
     });
-    form.addEventListener('click', event => {
-      event.stopPropagation();
+
+
+    btnDel.addEventListener('click', () => {
+      document.querySelectorAll('.delete').forEach(del => {
+        del.classList.toggle('is-visible');
+      });
     });
-    
+
+    list.addEventListener('click', e => {
+      const target = e.target;
+      if (target.closest('.del-icon')) {
+        target.closest('.contact').remove();
+      }
+    });
+
+    const makeNewDataObject = () => {
+      document.querySelectorAll('.contact').forEach(elem => {
+        elem.remove();
+      });
+      renderContacts(list, data);
+    };
+
+    thead.addEventListener('click', e => {
+      const target = e.target;
+      if (target.closest('.name')) {
+        data.sort((a, b) => ((a.name > b.name) ? 1 : -1));
+        makeNewDataObject();
+      }
+
+      if (target.closest('.surname')) {
+        data.sort((a, b) => ((a.surname > b.surname) ? 1 : -1));
+        makeNewDataObject();
+      }
+    });
+
+
+    // setTimeout(() => {
+    //   const contact = createRow({
+    //       name: 'Сидр',
+    //       surname: 'Сидоров',
+    //       phone: '911',
+    //     });
+    //   list.append(contact);
+    // }, 2000)
   };
+
 
   window.phoneBookInit = init;
 }
