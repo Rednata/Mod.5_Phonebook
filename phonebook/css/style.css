@@ -131,6 +131,8 @@ body {
   text-align: center;
 }
 
-/* .edit__btn {
-  background-image: url("../img/icons_edit.svg");
-} */
+.edit__btn {
+  border: none;
+  padding: 0.75rem;  
+  background-color: transparent;  
+}
