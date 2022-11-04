@@ -306,9 +306,11 @@ const addContactPage = (contact, list) => {
   list.append(createRow(contact));
 }
 
+
   const formControl = (form, list, closeModal) => {
     form.addEventListener('submit', e => {
       e.preventDefault();
+      console.log('==========', e);
 
       const formData = new FormData(e.target);
 
@@ -346,23 +348,32 @@ const addContactPage = (contact, list) => {
     deleteControl(btnDel, list);
     formControl(form, list, closeModal);
 
-    const makeNewDataObject = () => {
-      document.querySelectorAll('.contact').forEach(elem => {
-        elem.remove();
-      });
-      renderContacts(list, data);
+    const makeNewDataObject = (field) => {
+      data.sort((a, b) => ((a[field] > b[field]) ? 1 : -1));
+      console.log(data);
     };
+
+    const makeSortTable = (numberChildren) => {
+      allRow.sort((a, b) => {
+        return (a.children[numberChildren].textContent > b.children[numberChildren].textContent) ? 1 : -1;
+      });
+      console.log(allRow);
+    }
 
     thead.addEventListener('click', e => {
       const target = e.target;
       if (target.closest('.name')) {
-        data.sort((a, b) => ((a.name > b.name) ? 1 : -1));
-        makeNewDataObject();
+        
+        makeNewDataObject('name');
+        makeSortTable(1);
+        
+        list.append(...allRow);
       }
 
       if (target.closest('.surname')) {
-        data.sort((a, b) => ((a.surname > b.surname) ? 1 : -1));
-        makeNewDataObject();
+        makeNewDataObject('surname');
+        makeSortTable(2);
+        list.append(...allRow);
       }
     });
 
