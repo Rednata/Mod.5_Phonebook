@@ -24,11 +24,10 @@ const data = [
 ];
 
 {
-
   const addContactData = contact => {
     data.push(contact);
     console.log('data:', data);
-  }
+  };
 
 
   const createContainer = () => {
@@ -165,7 +164,7 @@ const data = [
 
     return footer;
   };
-
+  // ===========================================
   const renderPhoneBook = (app, title) => {
     const header = createHeader();
     const logo = createLogo(title);
@@ -203,7 +202,7 @@ const data = [
     };
   };
 
-
+  // ============================================
   const createRow = ({name: firstName, surname, phone}) => {
     const tr = document.createElement('tr');
     tr.classList.add('contact');
@@ -241,6 +240,7 @@ const data = [
     return tr;
   };
 
+  // ============================================
   const renderContacts = (elem, data) => {
     const allRow = data.map(createRow);
     elem.append(...allRow);
@@ -301,20 +301,47 @@ const data = [
     });
   };
 
-const addContactPage = (contact, list) => {
-  console.log(contact);
-  list.append(createRow(contact));
-}
+  const addContactPage = (contact, list) => {
+    list.append(createRow(contact));
+  };
 
+  const sortTableAndArray = (thead, list) => {
+    const makeSortArray = (field) => {
+      data.sort((a, b) => ((a[field] > b[field]) ? 1 : -1));
+    };
+
+    const makeSortTable = (numberChildren) => {
+      const newList = Array.from(document.querySelectorAll('.contact'));
+      newList.sort((a, b) =>
+        ((a.children[numberChildren].textContent >
+          b.children[numberChildren].textContent) ? 1 : -1));
+
+      return newList;
+    };
+
+    thead.addEventListener('click', e => {
+      const target = e.target;
+      if (target.closest('.name')) {
+        makeSortArray('name');
+        const newList = makeSortTable(1);
+
+        list.append(...newList);
+      }
+
+      if (target.closest('.surname')) {
+        makeSortArray('surname');
+        const newList = makeSortTable(2);
+        list.append(...newList);
+      }
+    });
+  };
 
   const formControl = (form, list, closeModal) => {
     form.addEventListener('submit', e => {
       e.preventDefault();
-      console.log('==========', e);
 
       const formData = new FormData(e.target);
 
-      
       const newContact = Object.fromEntries(formData);
 
       addContactPage(newContact, list);
@@ -324,8 +351,8 @@ const addContactPage = (contact, list) => {
 
       form.reset();
       closeModal();
-    })
-  }
+    });
+  };
 
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
@@ -348,44 +375,7 @@ const addContactPage = (contact, list) => {
     deleteControl(btnDel, list);
     formControl(form, list, closeModal);
 
-    const makeNewDataObject = (field) => {
-      data.sort((a, b) => ((a[field] > b[field]) ? 1 : -1));
-      console.log(data);
-    };
-
-    const makeSortTable = (numberChildren) => {
-      allRow.sort((a, b) => {
-        return (a.children[numberChildren].textContent > b.children[numberChildren].textContent) ? 1 : -1;
-      });
-      console.log(allRow);
-    }
-
-    thead.addEventListener('click', e => {
-      const target = e.target;
-      if (target.closest('.name')) {
-        
-        makeNewDataObject('name');
-        makeSortTable(1);
-        
-        list.append(...allRow);
-      }
-
-      if (target.closest('.surname')) {
-        makeNewDataObject('surname');
-        makeSortTable(2);
-        list.append(...allRow);
-      }
-    });
-
-
-    // setTimeout(() => {
-    //   const contact = createRow({
-    //       name: 'Сидр',
-    //       surname: 'Сидоров',
-    //       phone: '911',
-    //     });
-    //   list.append(contact);
-    // }, 2000)
+    sortTableAndArray(thead, list);
   };
 
 
