@@ -1,4 +1,6 @@
-const data = [
+'use strict';
+
+const data1 = [
   {
     name: 'Иван',
     surname: 'Петров',
@@ -21,11 +23,36 @@ const data = [
   },
 ];
 
-console.log(data);
+const key = 'data';
 
-data.sort((a, b) => {
-  if (a.surname > b.surname) return 1;
-  else return -1
-})
+const newObj = {
+  name: 'Мария',
+  surname: 'Попова',
+  phone: '+79876543210',
+};
 
-console.log(data);
+
+const data2 = [];
+console.log(!!data1);
+console.log(!!data2);
+
+// localStorage.setItem(key, JSON.stringify(data2));
+
+
+// const s = JSON.parse(localStorage.getItem(key));
+// console.log(s);
+// s.push(newObj);
+
+// console.log(s);
+
+// localStorage.setItem(key, JSON.stringify(s));
+
+
+const a = [];
+const b = {
+  x1: 5,
+  x2: 15,
+  x3: 35,
+};
+console.log(a.push(b));
+console.log(a);

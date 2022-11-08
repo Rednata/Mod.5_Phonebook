@@ -1,35 +1,29 @@
 'use strict';
 
-const data = [
-  {
-    name: 'Иван',
-    surname: 'Петров',
-    phone: '+79514545454',
-  },
-  {
-    name: 'Игорь',
-    surname: 'Семёнов',
-    phone: '+79999999999',
-  },
-  {
-    name: 'Семён',
-    surname: 'Иванов',
-    phone: '+79800252525',
-  },
-  {
-    name: 'Мария',
-    surname: 'Попова',
-    phone: '+79876543210',
-  },
-];
+// const data = [
+//   {
+//     name: 'Иван',
+//     surname: 'Петров',
+//     phone: '+79514545454',
+//   },
+//   {
+//     name: 'Игорь',
+//     surname: 'Семёнов',
+//     phone: '+79999999999',
+//   },
+//   {
+//     name: 'Семён',
+//     surname: 'Иванов',
+//     phone: '+79800252525',
+//   },
+//   {
+//     name: 'Мария',
+//     surname: 'Попова',
+//     phone: '+79876543210',
+//   },
+// ];
 
 {
-  const addContactData = contact => {
-    data.push(contact);
-    console.log('data:', data);
-  };
-
-
   const createContainer = () => {
     const container = document.createElement('div');
     container.classList.add('container');
@@ -150,7 +144,7 @@ const data = [
 
     return {
       overlay,
-      form, // Зачем мы здесь возвращаем form?
+      form,
     };
   };
 
@@ -240,6 +234,19 @@ const data = [
     return tr;
   };
 
+  const getStorage = (key) => {
+    console.log(JSON.parse(localStorage.getItem(key)));
+    return JSON.parse(localStorage.getItem(key)) || [];
+  };
+
+  const setStorage = (key, newContact) => {
+    const temp = getStorage(key);
+
+    temp.push(newContact);
+
+    localStorage.setItem(key, JSON.stringify(temp));
+  };
+
   // ============================================
   const renderContacts = (elem, data) => {
     const allRow = data.map(createRow);
@@ -305,7 +312,10 @@ const data = [
     list.append(createRow(contact));
   };
 
-  const sortTableAndArray = (thead, list) => {
+
+
+
+  const sortTableAndArray = (thead, list, data) => {
     const makeSortArray = (field) => {
       data.sort((a, b) => ((a[field] > b[field]) ? 1 : -1));
     };
@@ -336,7 +346,7 @@ const data = [
     });
   };
 
-  const formControl = (form, list, closeModal) => {
+  const formControl = (form, list, closeModal, key) => {
     form.addEventListener('submit', e => {
       e.preventDefault();
 
@@ -346,8 +356,8 @@ const data = [
 
       addContactPage(newContact, list);
 
-      addContactData(newContact);
-
+      // addContactData(newContact);
+      setStorage(key, newContact);
 
       form.reset();
       closeModal();
@@ -367,15 +377,18 @@ const data = [
       btnDel} = renderPhoneBook(app, title);
 
     // Функционал
+    const keyPhonebook = 'key';
+
+    const data = getStorage(keyPhonebook);
 
     const allRow = renderContacts(list, data);
     const {closeModal} = modalControl(btnAdd, formOverlay);
 
     hoverRow(allRow, logo);
     deleteControl(btnDel, list);
-    formControl(form, list, closeModal);
+    formControl(form, list, closeModal, keyPhonebook);
 
-    sortTableAndArray(thead, list);
+    sortTableAndArray(thead, list, data);
   };
 
 
