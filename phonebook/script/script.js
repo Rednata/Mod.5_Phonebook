@@ -24,6 +24,8 @@
 // ];
 
 {
+  const keyPhonebook = 'key';
+
   const createContainer = () => {
     const container = document.createElement('div');
     container.classList.add('container');
@@ -158,7 +160,7 @@
 
     return footer;
   };
-  // ===========================================
+
   const renderPhoneBook = (app, title) => {
     const header = createHeader();
     const logo = createLogo(title);
@@ -196,7 +198,6 @@
     };
   };
 
-  // ============================================
   const createRow = ({name: firstName, surname, phone}) => {
     const tr = document.createElement('tr');
     tr.classList.add('contact');
@@ -234,22 +235,29 @@
     return tr;
   };
 
-  const getStorage = (key) => {
-    console.log(JSON.parse(localStorage.getItem(key)));
-    return JSON.parse(localStorage.getItem(key)) || [];
-  };
+  // ============== STORAGE ====================
+  const getStorage = (key) =>
+    JSON.parse(localStorage.getItem(key)) || [];
 
   const setStorage = (key, newContact) => {
     const temp = getStorage(key);
-
     temp.push(newContact);
-
     localStorage.setItem(key, JSON.stringify(temp));
+  };
+
+  const removeStorage = (data, numberPhone, key) => {
+    const removeIndex = data.findIndex(elem =>
+      elem['phone'] === numberPhone);
+    data.splice(removeIndex, 1);
+    localStorage.setItem(key, JSON.stringify(data));
   };
 
   // ============================================
   const renderContacts = (elem, data) => {
     const allRow = data.map(createRow);
+
+    elem.innerHTML = '';
+
     elem.append(...allRow);
 
     return allRow;
@@ -293,7 +301,7 @@
   // ===================================================
 
 
-  const deleteControl = (btnDel, list) => {
+  const deleteControl = (btnDel, list, key) => {
     btnDel.addEventListener('click', () => {
       document.querySelectorAll('.delete').forEach(del => {
         del.classList.toggle('is-visible');
@@ -303,7 +311,12 @@
     list.addEventListener('click', e => {
       const target = e.target;
       if (target.closest('.del-icon')) {
+        const numberPhone = target.closest('.contact').
+            querySelector('a').textContent;
         target.closest('.contact').remove();
+
+        const data = getStorage(key);
+        removeStorage(data, numberPhone, key);
       }
     });
   };
@@ -313,35 +326,26 @@
   };
 
 
+  const sortContactsByField = (field) => {
+    const data = getStorage(keyPhonebook);
 
+    const newData = data.sort((a, b) => (a[field] > b[field] ? 1 :
+        a[field] < b[field] ? -1 :
+        0));
 
-  const sortTableAndArray = (thead, list, data) => {
-    const makeSortArray = (field) => {
-      data.sort((a, b) => ((a[field] > b[field]) ? 1 : -1));
-    };
+    localStorage.setItem(keyPhonebook, JSON.stringify(newData));
 
-    const makeSortTable = (numberChildren) => {
-      const newList = Array.from(document.querySelectorAll('.contact'));
-      newList.sort((a, b) =>
-        ((a.children[numberChildren].textContent >
-          b.children[numberChildren].textContent) ? 1 : -1));
+    return newData;
+  };
 
-      return newList;
-    };
-
-    thead.addEventListener('click', e => {
-      const target = e.target;
+  const onTableHeaderClick = (thead, list) => {
+    thead.addEventListener('click', ({target}) => {
       if (target.closest('.name')) {
-        makeSortArray('name');
-        const newList = makeSortTable(1);
-
-        list.append(...newList);
+        renderContacts(list, sortContactsByField('name'));
       }
 
       if (target.closest('.surname')) {
-        makeSortArray('surname');
-        const newList = makeSortTable(2);
-        list.append(...newList);
+        renderContacts(list, sortContactsByField('surname'));
       }
     });
   };
@@ -377,7 +381,6 @@
       btnDel} = renderPhoneBook(app, title);
 
     // Функционал
-    const keyPhonebook = 'key';
 
     const data = getStorage(keyPhonebook);
 
@@ -385,10 +388,9 @@
     const {closeModal} = modalControl(btnAdd, formOverlay);
 
     hoverRow(allRow, logo);
-    deleteControl(btnDel, list);
+    deleteControl(btnDel, list, keyPhonebook);
     formControl(form, list, closeModal, keyPhonebook);
-
-    sortTableAndArray(thead, list, data);
+    onTableHeaderClick(thead, list);
   };
 
 
