@@ -1,15 +1,15 @@
-import createElements from './createElements.js';
+import createElements from './createElements';
 const {
   createRow,
 } = createElements;
 
-import * as render from './render.js';
+import * as render from './render';
 //  Так можно сразу деструктурировать?
 const {
   renderContacts,
 } = render;
 
-import {getStorage, setStorage, removeStorage} from './storage.js';
+import {getStorage, setStorage, removeStorage} from './storage';
 
 const modalControl = (btnAdd, formOverlay) => {
   const openModal = () => {

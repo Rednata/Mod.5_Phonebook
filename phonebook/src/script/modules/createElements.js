@@ -1,3 +1,12 @@
+import image from '../../img/icon.svg';
+import image1 from '../../img/icons_edit.svg';
+
+export const createImageLogo = () => {
+  const img = document.createElement('img');
+  img.src = image;
+  return img;
+};
+
 const createContainer = () => {
   const container = document.createElement('div');
   container.classList.add('container');
@@ -104,7 +113,8 @@ const createRow = ({name: firstName, surname, phone}) => {
   editButton.classList.add('edit__btn');
   const btnImg = document.createElement('img');
 
-  btnImg.src = './phonebook/img/icons_edit.svg';
+  // btnImg.src = './img/icons_edit.svg';
+  btnImg.src = image1;
   editButton.append(btnImg);
 
   tr.append(tdDel, tdName, tdSurname, tdPhone, editButton);

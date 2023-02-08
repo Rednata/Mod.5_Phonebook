@@ -1,2 +1,4 @@
 /.vscode
 /phonebook/script/script1.js
+/phonebook/node_modules
+/phonebook/dist

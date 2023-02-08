@@ -1,11 +1,10 @@
-import * as render from './modules/render.js';
-//  Так можно сразу деструктурировать?
+import * as render from './script/modules/render';
 const {
   renderPhoneBook,
   renderContacts,
 } = render;
 
-import {getStorage} from './modules/storage.js';
+import {getStorage} from './script/modules/storage';
 
 import {
   modalControl,
@@ -13,7 +12,11 @@ import {
   onTableHeaderClick,
   formControl,
   hoverRow,
-} from './modules/control.js';
+} from './script/modules/control';
+
+// import './css/style.css';
+import './scss/index.scss';
+// import './index.html';
 
 {
   // const keyPhonebook = 'key';

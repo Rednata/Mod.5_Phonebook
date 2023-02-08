@@ -1,4 +1,4 @@
-import createElements from './createElements.js';
+import createElements from './createElements';
 const {
   createHeader,
   createLogo,
@@ -10,8 +10,11 @@ const {
   createFooter,
 } = createElements;
 
+import {createImageLogo} from './createElements';
+
 export const renderPhoneBook = (app, title) => {
   const header = createHeader();
+  const imageLogo = createImageLogo();
   const logo = createLogo(title);
   const main = createMain();
   const buttonGroup = createButtonsGroup([
@@ -31,7 +34,7 @@ export const renderPhoneBook = (app, title) => {
   const {form, overlay} = createForm();
   const footer = createFooter(title);
 
-  header.headerContainer.append(logo);
+  header.headerContainer.append(imageLogo, logo);
   main.mainContainer.append(buttonGroup.btnWrapper, table, overlay);
 
   app.append(header, main, footer);
